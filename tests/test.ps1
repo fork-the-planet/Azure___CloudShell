@@ -4,5 +4,15 @@
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
-cd /tests
-Invoke-Pester -CI -Script PSinLinuxCloudShellImage.Tests.ps1
+Push-Location /tests
+try {
+	$config = New-PesterConfiguration
+	$config.TestResult.Enabled = $false
+	$config.Filter.Tag = "CloudShellUser"
+	$config.Output.CIFormat = "GithubActions"
+
+	Invoke-Pester -Configuration $config
+} finally {
+	Pop-Location
+}
+
